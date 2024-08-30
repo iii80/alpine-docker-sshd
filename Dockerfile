@@ -15,8 +15,10 @@ RUN apk update && apk add --no-cache \
 ENV SSH_USERNAME=root
 ENV SSH_PASSWORD=root
 
-# Create a new user with sudo privileges using the environment variable
-RUN adduser -D ${SSH_USERNAME} && adduser ${SSH_USERNAME} wheel
+# Create a new user with sudo privileges if it doesn't exist
+RUN if ! id -u ${SSH_USERNAME} > /dev/null 2>&1; then \
+        adduser -D ${SSH_USERNAME} && adduser ${SSH_USERNAME} wheel; \
+    fi
 
 # Allow password-based authentication for SSH
 RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
