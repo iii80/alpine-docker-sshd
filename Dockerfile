@@ -12,14 +12,8 @@ RUN apk update && apk add --no-cache \
     vim \
     && mkdir /var/run/sshd
 
-# Set environment variables for the username and password
-ENV SSH_USERNAME=root
-ENV SSH_PASSWORD=root
-
-# Create a new user with sudo privileges if it doesn't exist
-RUN if ! id -u ${SSH_USERNAME} > /dev/null 2>&1; then \
-        adduser -D ${SSH_USERNAME} && adduser ${SSH_USERNAME} wheel; \
-    fi
+# Set the root password
+RUN echo "root:root" | chpasswd
 
 # Allow password-based authentication for SSH
 RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
@@ -31,4 +25,4 @@ RUN echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 EXPOSE 22
 
 # Set the password at runtime and start SSHD
-CMD ssh-keygen -A && echo "${SSH_USERNAME}:${SSH_PASSWORD}" | chpasswd && /usr/sbin/sshd -D
+CMD ssh-keygen -A && /usr/sbin/sshd -D
