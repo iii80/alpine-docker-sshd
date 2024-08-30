@@ -4,9 +4,10 @@ FROM alpine:3.20
 # Add maintainer label
 LABEL maintainer="Muhammad Ayub Alfathoni <alfathmas24@gmail.com>"
 
-# Install necessary packages, including OpenSSH and sudo
+# Install necessary packages, including OpenSSH server and client, sudo, and vim
 RUN apk update && apk add --no-cache \
     openssh-server \
+    openssh-client \
     sudo \
     vim \
     && mkdir /var/run/sshd
@@ -29,5 +30,5 @@ RUN echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 # Expose SSH port
 EXPOSE 22
 
-# Set the password at runtime
+# Set the password at runtime and start SSHD
 CMD ssh-keygen -A && echo "${SSH_USERNAME}:${SSH_PASSWORD}" | chpasswd && /usr/sbin/sshd -D
