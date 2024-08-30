@@ -18,11 +18,14 @@ RUN echo "root:root" | chpasswd
 # Allow password-based authentication for SSH
 RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
 
+# Ensure PermitRootLogin is set to yes
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
 # Optional: Disable strict host checking (useful for testing)
 RUN echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
 # Expose SSH port
 EXPOSE 22
 
-# Set the password at runtime and start SSHD
-CMD ssh-keygen -A && /usr/sbin/sshd -D
+# Start SSHD in debug mode to gather more information if it fails
+CMD ssh-keygen -A && /usr/sbin/sshd -D -e
