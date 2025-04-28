@@ -5,15 +5,11 @@ FROM alpine:3.20
 LABEL maintainer="Muhammad Ayub Alfathoni <alfathmas24@gmail.com>"
 
 # Install necessary packages, including OpenSSH server and client, sudo, and vim
-RUN apk update && apk add --no-cache \
-    openssh-server \
-    openssh-client \
-    sudo \
-    vim \
-    && mkdir /var/run/sshd
+RUN apk update && apk add --no-cache openssh-server openssh-client sudo vim htop nload curl wget tar ncdu git bash net-tools
+&& mkdir /var/run/sshd
 
 # Set the root password
-RUN echo "root:root" | chpasswd
+RUN echo "root:admin" | chpasswd
 
 # Allow password-based authentication for SSH
 RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
